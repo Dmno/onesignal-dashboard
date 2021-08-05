@@ -1,0 +1,227 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    {% set weekdayArray = [
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+        'Sunday'
+    ]
+    %}
+
+    {% include 'main/campaign/utility_modal.html.twig' %}
+    {% include 'main/statistics_panel.html.twig' %}
+
+    <div class="text-center">
+        <h3>Viewing Campaign - {{ campaign.name }}</h3>
+        {% if campaign.paused == true %}
+            <b style="color:red; font-size: 25px">CAMPAIGN IS PAUSED</b>
+            <div class="mb-1">
+                <button class="btn btn-sm btn-outline-danger view-resume-campaign show-loading-block" id="{{ campaign.id }}" style="font-weight: 700;">UNPAUSE</button>
+            </div>
+        {% endif %}
+        <h4>Campaign country: {{ campaign.country.title }} ({{ campaign.country.short }})</h4>
+
+        <a href="{{ path('show_campaigns') }}">
+            <button class="btn btn-danger show-loading-block back-to-campaigns" id="{{ campaign.country.id }}"><i class="fa fa-arrow-left"></i> Back to campaigns</button>
+        </a>
+
+        {% if notAssignedNotifications is not empty %}
+            <a href="{{ path('create_notification', {'type': 'campaign', 'id': campaign.id})}}">
+                <button class="btn btn-success ml-3">Create a new notification</button>
+            </a>
+            <button data-toggle="modal" data-target="#myModal2" data-remote="yes" class="btn btn-primary ml-3">Assign existing notifications</button>
+            {{render(path('add_notifications_to_campaign', {campaign: campaign.id}))}}
+        {% else %}
+            <p>There are no notifications of this country or all have been assigned, create a new one here:</p>
+            <a href="{{ path('create_notification',{'type': 'campaign', 'id': campaign.id}) }}">
+                <button class="btn btn-sm btn-primary show-loading-block">Create a new notification</button>
+            </a>
+        {% endif %}
+
+        <div class="card mt-3 campaign-main-block">
+            {% if notifications is not empty %}
+                {% for notification in notifications %}
+                    <div class="grid-container" id="view-container-{{ notification.id }}">
+                        <div class="notifications">
+                            <i id="notification-id-reference-block-{{ notification.schedule.id }}" style="display: none">{{ notification.id }}</i>
+                            <div class="campaign-notification-block" id="campaign-notification-block-{{ notification.id }}">
+                                <span class="campaign-notification-title" id="campaign-view-notification-title{{ notification.id }}">{{ notification.name |length > 80 ? notification.name|slice(0, 80) ~ '...' : notification.name }}</span>
+
+                                <div class="campaign-view-notification-confirm" id="confirm-delete-block-{{ notification.id }}">
+                                    <div id="view-loading-delete{{ notification.id }}" style="display: none;margin-top:20px;">
+                                        <span class="fa fa-cog fa-spin fa-2x" id="view-loading-cog{{ notification.id }}"></span>
+                                        <span class="fa fa-check fa-2x" id="view-loading-check{{ notification.id }}" style="color: green;display: none;"></span>
+                                    </div>
+
+                                    <span id="view-notification-delete-title{{ notification.id }}">Are you sure?</span>
+                                    <div class="view-campaign-notification-button-block text-center" id="view-campaign-delete-buttons{{ notification.id }}">
+                                        <button class="btn btn-sm btn-success confirm-button-style confirm-view-notification-delete mr-1" id="{{ notification.id }}">Confirm</button><button class="btn btn-sm btn-danger confirm-button-style cancel-view-notification-delete" id="{{ notification.id }}">Cancel</button>
+                                    </div>
+                                </div>
+
+                                {% if notification.timesSent is not null %}
+                                    <div class="mt-2" id="times-sent-{{ notification.id }}">Times sent - {{ notification.timesSent }}</div>
+                                    <div id="total-receivers-{{ notification.id }}">Total receivers - {{ notification.sends|number_format(0, '.') }}</div>
+                                {% endif %}
+
+                                <div class="campaign-options" id="options-for-notification-{{ notification.id }}">
+                                    <button class="btn btn-sm btn-outline-secondary notification-view-action-button custom-edit-button edit-campaign-notification" data-toggle="modal" data-target="#utilityModal" value="edit" id="edit{{ notification.id }}" style="width: 70px;">Edit</button>
+                                    <button class="btn btn-sm btn-outline-secondary notification-view-action-button custom-preview-button preview-campaign-notification" data-toggle="modal" data-target="#utilityModal" value="preview" id="preview{{ notification.id }}" style="width: 70px;">Preview</button>
+                                    <button class="btn btn-sm btn-outline-secondary notification-view-action-button custom-delete-button delete-campaign-notification" id="{{ notification.id }}" style="width: 70px;">Delete</button>
+                                    <button class="btn btn-sm btn-outline-secondary notification-view-action-button custom-pause-button pause-campaign-notification notification-pause-button{{ notification.id }}" id="{{ notification.id }}" value="{% if notification.paused == true %}unpause{% else %}pause{% endif %}" style="width: 75px;display:{% if campaign.paused == true %}none{% else %}inline-block{% endif %}">{% if notification.paused == true %}Unpause{% else %}Pause{% endif %}</button>
+                                    {% if notification.notificationStats is not null %}
+                                        <button class="btn btn-sm btn-outline-secondary notification-view-action-button campaign-stat-button show-notification-stats" id="{{ notification.id }}">Stats</button>
+                                    {% endif %}
+                                    <i id="view-notification-schedule-id-{{ notification.id }}" style="display: none">{{ notification.schedule.id }}</i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="time" style="margin: auto; font-size: 18px;">
+
+                            <div class="campaign-time-loading-block time-loading-block{{ notification.schedule.id }} text-center" style="display: none;vertical-align: middle;">
+                                <span class="fa fa-cog fa-spin fa-3x"></span>
+                            </div>
+
+                            <div class="dynamic-campaign-time-block{{ notification.schedule.id }}" style="display: none">
+                                <div class="dynamic-campaign-scheduled-time{{ notification.schedule.id }}"></div>
+                                <button class="btn btn-sm btn-success activate-time-form dynamic-time-edit-button{{ notification.schedule.id }}" id="{{ notification.schedule.id }}" value="dynamic">Edit</button>
+                                <button class="btn btn-sm btn-success activate-time-form time-form-button{{ notification.schedule.id }} dynamic-time-set-button{{ notification.schedule.id }}" id="{{ notification.schedule.id }}" style="display: none" value="dynamic">Set a time</button>
+                            </div>
+
+                            <div class="dynamic-notification-paused{{ notification.id }} view-notification-paused-text" style="display: none">PAUSED</div>
+                            <i id="is-dynamic{{ notification.schedule.id }}" style="display:none">false</i>
+
+                            <div id="time-setting-form{{ notification.schedule.id }}" style="display: none">
+                                <form id="campaign-time-form{{ notification.schedule.id }}">
+                                    <div class="form-group" style="display: inline-block">
+                                        <label for="form_time" class="required">Notification time</label>
+                                        <input type="text" id="form_time{{ notification.schedule.id }}" required="required" name="time" class="campaign-time form-control" value="{% if notification.schedule.time is not empty %}{{ notification.schedule.time|date('H:i:s') }} {% endif %}" placeholder="17:49">
+                                        <small id="form_time_help" class="form-text text-muted">17:49 or 17:49:05</small>
+                                    </div>
+                                    <input class="campaign-time-schedule-id" name="scheduleId" value="{{ notification.schedule.id }}" type="hidden">
+                                </form>
+                                <button class="btn btn-sm btn-primary save-campaign-time" id="{{ notification.schedule.id }}">Save</button>
+                                <button class="btn btn-sm btn-outline-danger cancel-campaign-time" id="{{ notification.schedule.id }}">Cancel</button>
+                            </div>
+
+                            {% if notification.paused == true %}
+                                <div class="notification-time-paused{{ notification.id }} view-notification-paused-text">PAUSED</div>
+                            {% else %}
+                                {% if notification.schedule.time is not empty %}
+                                    <div class="campaign-time-block{{ notification.schedule.id }}">
+                                        <div class="campaign-scheduled-time{{ notification.schedule.id }}">
+                                            Scheduled time: {{ notification.schedule.time|date('H:i:s')}}
+                                        </div>
+                                        <button class="btn btn-sm btn-success activate-time-form" id="{{ notification.schedule.id }}" value="regular">Edit</button>
+                                    </div>
+                                {% else %}
+                                    <div class="campaign-time-block{{ notification.schedule.id }}">
+                                        <div class="campaign-scheduled-time{{ notification.schedule.id }}">
+                                            No time set yet
+                                        </div>
+                                        <button class="btn btn-sm btn-success activate-time-form time-form-button{{ notification.schedule.id }}" id="{{ notification.schedule.id }}">Set a time</button>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                        <div class="days" style="height: 70%; margin: auto">
+                            {% set setDayArray = [] %}
+                            {% set day = "" %}
+                            {% set closestDay = "" %}
+                            {% set i = 0 %}
+
+                            {% for dayOfTheWeek in notification.schedule.weekdays %}
+                                {% if i == 0 %}
+                                    {% set closestDay = dayOfTheWeek.date %}
+                                    {% set i = 1 %}
+                                {% endif %}
+
+                                {% if i == 1 %}
+                                    {% if date(dayOfTheWeek.date) < date(closestDay) %}
+                                        {% set closestDay = dayOfTheWeek.date %}
+                                    {% endif %}
+                                {% endif %}
+
+                                {% set day = dayOfTheWeek.day %}
+                                {% set setDayArray = setDayArray|merge([ day ]) %}
+                                {% set day = "" %}
+                            {% endfor %}
+
+                            {% if notification.paused == true %}
+                                <div class="campaign-weekday-paused-block paused-block{{ notification.id }} text-center" style="vertical-align: middle;">
+                                    <span class="campaign-pause-block-text">
+                                        {% if campaign.paused == true %}
+                                            <span class="view-notification-no-unpause-text">Cannot unpause if the campaign is paused</span>
+                                        {% else %}
+                                            <button class="btn btn-sm btn-primary pause-campaign-notification" id="{{ notification.id }}" style="width: 200px;font-weight:700;" value="unpause">UNPAUSE</button>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            {% else %}
+                                <div class="campaign-weekday-paused-block dynamic-paused-block{{ notification.id }} text-center" style="display:none">
+                                    <span class="campaign-pause-block-text"><button class="btn btn-sm btn-primary pause-campaign-notification" id="{{ notification.id }}" style="width: 200px;font-weight:700;" value="unpause">UNPAUSE</button></span>
+                                </div>
+                                {% if notification.schedule.time is not null %}
+                                    <div class="text-center next-send-block{{ notification.schedule.id }}">
+                                        {% if notification.lastSent is not null %}
+                                            Last - <b>{{ notification.lastSent | date("Y-m-d H:i:s") }}</b>
+                                        {% endif %}
+                                        {% if setDayArray is not empty %}
+                                            <span id="next-send-block{{ notification.schedule.id }}">Next - <b id="next-send{{ notification.schedule.id }}">{{ closestDay | date("Y-m-d") }} {{ notification.schedule.time|date('H:i:s') }}</b></span>
+                                        {% endif %}
+                                        <span id="dynamic-next-send-block{{ notification.schedule.id }}" style="display: none">Next - <b id="dynamic-next-send{{ notification.schedule.id }}"></b></span>
+                                    </div>
+                                {% endif %}
+
+                                {% if notification.schedule.time is empty %}
+                                    <div id="campaign-time-error{{ notification.schedule.id }}" class="alert alert-primary" style="max-width: 410px; display: block">
+                                        <i class="fa fa-exclamation-triangle"></i>
+                                        <b id="campaign-time-error-message" style="font-weight: 500;!important;">Set a time first to be able to assign days</b>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+
+                            <div id="dynamic-campaign-time-error{{ notification.schedule.id }}" class="alert alert-primary" style="max-width: 410px; display: none">
+                                <i class="fa fa-exclamation-triangle"></i>
+                                <b id="campaign-time-error-message" style="font-weight: 500;!important;">Set a time first to be able to assign days</b>
+                            </div>
+
+                            <div class="campaign-weekday-loading-block weekday-block{{ notification.schedule.id }} text-center" style="vertical-align: middle;">
+                                <span class="fa fa-cog fa-spin fa-3x"></span>
+                            </div>
+
+                            <div class="hidden-weekdays{{ notification.schedule.id }}" style="display: {% if notification.schedule.time is empty or notification.paused == true %} none {% else %} block {% endif %}">
+                                <div id="weekdays{{ notification.schedule.id }}" style="display: flex">
+                                    {% for day in weekdayArray %}
+                                        {% if day in setDayArray %}
+                                            <div class="selected-weekday{{ notification.schedule.id }}" id="{{ day }}" style="margin-right: 10px;">
+                                                {{ day|slice(0, 3)|upper }}
+                                                <div style="min-width: 50px; height: 50px; background-color: limegreen" class="select-day weekday-selector{{ notification.schedule.id }}" id="{{ day }}"></div>
+                                            </div>
+                                        {% else %}
+                                            <div id="{{ day }}" style="margin-right: 10px;">
+                                                {{ day|slice(0, 3)|upper }}
+                                                <div style="min-width: 50px; height: 50px; background-color: red" class="select-day weekday-selector{{ notification.schedule.id }}" id="none"></div>
+                                            </div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div id="submit-weekdays-block{{ notification.schedule.id }}" class="alert" style="max-width: 410px; display: none;">
+                                <button class="btn btn-sm btn-primary save-weekdays" id="{{ notification.schedule.id }}">Save</button>
+                                <button class="btn btn-sm btn-outline-danger cancel-weekdays" id="{{ notification.schedule.id }}">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <h3 style="color: #f02525">No assigned notifications yet</h3>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

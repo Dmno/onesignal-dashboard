@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="text-center">
+        <h2 style="text-decoration: underline dotted black;">ONESIGNAL DASHBOARD</h2>
+
+        {% if apps is not empty %}
+            <div class="action-panel">
+                <a href="{{ path('create_notification', {'type': 'new', 'id': 'none'}) }}">
+                    <button class="btn btn-sm btn-primary">Create a notification</button>
+                </a>
+                <a href="{{ path('show_all_notifications') }}">
+                    <button class="btn btn-sm btn-warning">Show all notifications</button>
+                </a>
+                <a href="{{ path('show_campaigns') }}">
+                    <button class="btn btn-sm btn-success">Show all campaigns</button>
+                </a>
+            </div>
+
+            <div class="panel panel-primary" id="result_panel">
+                <div class="panel-heading mt-3"><h3 class="panel-title">App list</h3>
+                </div>
+                <div class="panel-body">
+                    {% for total in totals %}
+                        <strong>
+                            <i class="fa fa-user"></i> Total users: {{ total.1|number_format(0, '.') }}
+                            <i class="fa fa-envelope ml-2"></i> Total subscribers: {{ total.2|number_format(0, '.') }}
+                            {% if total.3 != 0 and total.3 > 0 %}
+                                <i style="color: green">+{{ total.3 }}</i>
+                            {% elseif total.3 < 0 %}
+                                <i style="color: red">{{ total.3 }}</i>
+                            {% endif %}
+                        </strong>
+                    {% endfor %}
+                    <ul class="list-group-main mt-3">
+                        {% for app in apps %}
+                            <li class="list-group-item">
+                                <strong>
+                                    {{ app.name }}
+                                    <i class="fa fa-user"></i> Total: {{ app.totalUsers|number_format(0, '.') }}
+                                    <i class="fa fa-envelope"></i> Subscribed users: {{ app.subscribedUsers|number_format(0, '.') }}
+                                    {% if app.increase != 0 and app.increase > 0 %}
+                                        <i style="color: green">+{{ app.increase }}</i>
+                                    {% elseif app.increase < 0 %}
+                                        <i style="color: red">{{ app.increase }}</i>
+                                    {% endif %}
+                                </strong>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        {% else %}
+            <h2 class="mt-2" style="color:red">There are no apps!</h2>
+            {% if account.apiKey is empty %}
+                <h3>OneSignal api key must be set to see them here</h3>
+                <h3>Please add a key here:</h3>
+            {% else %}
+                <h3>Please set up some apps in the current OneSignal account</h3>
+                <h3>Or change the current account here:</h3>
+            {% endif %}
+            <a href="{{ path("control_panel") }}"><button class="btn btn-primary">{% if account.apiKey is empty %}Add a key{% else %}Change api key{% endif %}</button></a>
+        {% endif %}
+    </div>
+{% endblock %}
+

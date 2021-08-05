@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+{% include 'main/upload/upload_modal.html.twig' %}
+
+    <div class="text-center">
+        <div>
+            <div class="overlay text-center" id="control-panel-loading-modal" style="display: none;">
+                <div class="control-panel-modal-container">
+                    <p id="control-panel-loading-text" style="font-size: 19px;">Verifying api key..</p>
+
+                    <div id="control-panel-loading-bar">
+                        <div class="lds-ellipsis"><div></div><div></div><div></div><div></div></div>
+                    </div>
+
+                    <span class="fa fa-exclamation-triangle fa-2x" id="control-panel-failed" style="color: red;display: none;"></span>
+                    <span class="fa fa-check fa-2x" id="control-panel-success" style="color: green;display: none;"></span>
+
+                    <div class="cp-confirm-buttons" style="display: none">
+                        <button class="btn btn-sm btn-primary cp-confirm-button" id="cp-confirm">Confirm</button> <button class="btn btn-sm btn-danger cp-confirm-button" id="cp-cancel">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if is_granted('ROLE_ADMIN') %}
+            <h1 style="text-decoration: underline dotted black;">Control panel</h1>
+
+            <div class="control-panel-os-api-key text-center" style="width: 50%; margin: 0 auto;">
+                <h2>OS Api Key</h2>
+                {% if account is empty %}
+                    <p style="font-size: 18px;font-weight:bold;color:red">No api key set! Add one now:</p>
+                {% endif %}
+
+                <i id="current-account-api-key" style="display: none">{{ account.apiKey }}</i>
+                <input type="text" id="control-panel-account-key" name="accountApiKey" required="required" value="{{ account.apiKey }}" class="form-control">
+                <div class="alert alert-warning mt-2" id="control-panel-api-key-error" style="display: none;margin-bottom: 0!important;">
+                    <i class="fa fa-exclamation-triangle"></i> <b id="control-panel-error-message" style="font-weight: 500;!important;"></b>
+                </div>
+
+                <button class="btn btn-primary mt-2" id="control-panel-submit-os-api-key" style="width: 200px;" disabled>Submit</button>
+            </div>
+        {% endif %}
+
+        <div class="control-panel-image-managing">
+            <h1>Picture Managing</h1>
+
+            <h3 id="picture-managing-title">Viewing images</h3>
+
+            <div style="height: 25px;font-weight: 700;">
+                <span id="cp-selected-image-text" style="display:none;margin-right: 10px;"></span><span id="cp-selected-icon-text" style="display:none;"></span>
+            </div>
+
+            <button class="btn btn-secondary" id="cp-switch-type">Switch picture type</button>
+            <button class="btn btn-danger" id="cp-delete-pictures" style="display: none">Delete selected pictures</button>
+
+            <div class="mt-2">
+                <span id="cp-upload-picture-text">Upload images: </span><i class="fa fa-upload fa-lg uploadNotificationImage" id="image"></i>
+            </div>
+
+            <div class="panel panel-primary mt-3" id="result_panel" style="border: solid 3px {{ app.user.color }};border-radius: 7px">
+                <div class="control-panel-list-group">
+                    <div class="control-panel-image-wrapper" id="cp-image-wrapper">
+                        {% for image in images %}
+                            <div class="cp-image-selection-block" id="cp-image-block-{{ image.id }}">
+                                <p id="cp-image-status-{{ image.id }}" style="display: none">false</p>
+                                <img src="{{ asset('images/') }}{{ image.title }}" id="{{ image.title }}" alt="" class="cp-image-style-class">
+                                <i class="fa fa-times-circle fa-2x cp-delete-picture" id="image-{{ image.id }}" style="color:red;"></i>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="control-panel-image-wrapper" id="cp-icon-wrapper" style="display: none">
+                        {% for icon in icons %}
+                            <div class="cp-image-selection-block" id="cp-icon-block-{{ icon.id }}">
+                                <p id="cp-icon-status-{{ icon.id }}" style="display: none">false</p>
+                                <img src="{{ asset('icons/') }}{{ icon.title }}" id="{{ icon.title }}" alt="" class="cp-image-style-class">
+                                <i class="fa fa-times-circle fa-2x cp-delete-picture" id="icon-{{ icon.id }}" style="color:red;"></i>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

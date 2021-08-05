@@ -1,0 +1,32 @@
+<div id="image-select-pop" class="overlay" style="display: none">
+    <div class="image-select-container text-center">
+        <div class="image-select-pop-inside">
+            <style>
+                .custom-file-input {
+                    opacity: 1;
+                }
+            </style>
+
+            <i class="fa fa-times fa-2x close-image-selection-popup" style="margin-left:96%; cursor: pointer;"></i>
+            <div class="panel panel-primary" id="result_panel">
+                    <div class="list-group">
+                        <div class="wrapper" id="image-wrapper" style="display: none">
+                            {% for image in images %}
+                                <div class="image-selection-image">
+                                    <img src="{{ asset('images/') }}{{ image.title }}" id="{{ image.title }}" alt="" class="image-style-class">
+                                </div>
+                            {% endfor %}
+                        </div>
+
+                        <div class="wrapper" id="icon-wrapper" style="display: none">
+                            {% for icon in icons %}
+                                <div class="image-selection-image">
+                                    <img src="{{ asset('icons/') }}{{ icon.title }}" id="{{ icon.title }}" alt="" class="image-style-class">
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>

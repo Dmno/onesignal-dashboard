@@ -1,0 +1,36 @@
+<div class="overlay" id="resendOverlay" style="display: none;">
+    <div id="resendModal" class="text-left" style="display: none; margin-top: 8%;">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 id="resend-notification-title" class="modal-title"></h5>
+                    <button type="button" id="hide-modal" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+                <div class="modal-body">
+                    <form id="resend-form">
+                        <div class="form-group">
+                            <label class="required" for="form_delivery">Delivery</label>
+                            <select id="form_delivery" name="delivery" class="resend_form_delivery form-control">
+                                <option value="immediately">Begin sending immediately</option>
+                                <option value="particular time">Begin sending at a particular time</option>
+                            </select>
+                        </div>
+
+                        <div class="date-block">
+                            <div class="btn btn-sm btn-success resend-reset-date" style="cursor: pointer;">Reset date</div>
+                            <div class="form-group">
+                                <label for="form_date" class="required">Date</label>
+                                <input type="text" id="form_date" required="required" name="date" class="resend_form_date form-control" aria-describedby="form_date_help" value="2020-10-12 17:02">
+                                <small id="form_date_help" class="form-text text-muted">2020-12-31 09:32</small>
+                            </div>
+                            <div id="date-error" class="alert alert-danger" style="display: none"><i class="fa fa-exclamation-triangle"></i> <b id="resend-date-error-message" style="font-weight: 500;!important;"></b></div>
+                        </div>
+                        <input class="resend_form_id" name="notificationId" type="hidden">
+                    </form>
+
+                    <button class="btn btn-primary mt-3 resend-submit" type="submit">Resend</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,62 @@
+<table class="table table-striped table-sm table-hover mt-3">
+    <thead>
+    <tr>
+        <th class="campaign-checkbox" style="display: none;max-width: 100px;">Select</th>
+        <th style="max-width: 125px;">Resume/Pause</th>
+        <th style="min-width: 5%;max-width: 5%;">Status</th>
+        <th class="campaign-name" style="min-width: 500px;max-width: 50%;">Name</th>
+        <th style="min-width: 10%">Notifications</th>
+        <th style="min-width: 150px;">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for campaign in campaigns %}
+        {% if campaign.country.title == country %}
+            <tr id="campaign-number{{ campaign.id }}">
+                <span id="campaign-country-id{{ campaign.id }}" style="display: none">{{ campaign.country.id }}</span>
+                <td class="campaign-checkbox-select" style="display: none"><input class="camp-checkbox" type="checkbox" id="{{ campaign.id }}" title="Select campaign"></td>
+                <td>
+                    {% if campaign.paused == true %}
+                        <i class="fa fa-play fa-lg campaign-activity-action campaign-resume campaign-action{{ campaign.id }}" title="Resume" id="{{ campaign.id }}"></i>
+                    {% else %}
+                        <i class="fa fa-pause fa-lg campaign-activity-action campaign-pause campaign-action{{ campaign.id }}" title="Pause" id="{{ campaign.id }}"></i>
+                    {% endif %}
+                    <i class="fa fa-cog fa-spin fa-lg" id="campaign-action-loading-{{ campaign.id }}" style="display: none;"></i>
+                </td>
+                <td>
+                    <b id="campaign-status-{{ campaign.id }}" style="color:{% if campaign.paused == true %}red{% else %}green{% endif %}">{% if campaign.paused == true %}Paused{% else %}Active{% endif %}</b>
+                </td>
+                <td>
+                    <span id="original-name-{{ campaign.id }}" style="display: none">{{campaign.name}}</span>
+                    <span class="editable-campaign-name" id="campaign-name-{{ campaign.id }}">{{campaign.name}}</span>
+                    <input type="text" class="campaign-name-input" id="edit-{{ campaign.id }}" required style="display:none;">
+                    <span class="fa fa-cog fa-spin" id="campaign-name-edit-cog-{{ campaign.id }}" style="display:none;"></span>
+                    <button class="btn btn-sm btn-success save-campaign-name-edit" id="save-changes-{{ campaign.id }}" style="cursor:pointer;display: none;margin-top:-5px">
+                        <span class="fa fa-save" style="color:white"></span>
+                    </button>
+                </td>
+                <td>{{campaign.notifications | length}}</td>
+                <td style="max-width: 200px;min-width: 150px;">
+                    <div id="loading-delete{{ campaign.id }}" style="display: none">
+                        <span class="fa fa-cog fa-spin fa-2x" id="loading-cog{{ campaign.id }}"></span>
+                        <span class="fa fa-check fa-2x" id="loading-check{{ campaign.id }}" style="color: green;display: none;"></span>
+                    </div>
+
+                    <div class="campaign-delete-confirm" id="confirm-delete-block{{ campaign.id }}" style="display: none">
+                        The campaign and all the assigned notifications will be permanently deleted. Are you sure?
+                        <div>
+                            <button class="btn btn-sm btn-success confirm-delete mr-1" id="{{ campaign.id }}">Confirm</button><button class="btn btn-sm btn-danger cancel-delete" id="{{ campaign.id }}">Cancel</button>
+                        </div>
+                    </div>
+                    <a href="{{ path('view_campaign', {'id': campaign.id}) }}">
+                        <button class="btn btn-sm btn-dark show-loading-block campaign-actions{{ campaign.id }} enter-campaign" id="{{ campaign.id }}">View</button>
+                    </a>
+                    <a href="#">
+                        <button class="btn btn-sm btn-danger delete-campaign campaign-actions{{ campaign.id }}" id="{{ campaign.id }}">Delete</button>
+                    </a>
+                </td>
+            </tr>
+        {% endif %}
+    {% endfor %}
+    </tbody>
+</table>

@@ -1,0 +1,65 @@
+<div class="stat-panel">
+    <p id="current-notification-id" style="display:none"></p>
+    <p id="current-statistics-page-location" style="display:none"></p>
+
+    <div class="text-center" id="notification-statistics-cog" style="width: 350px;height:100vh;display: none">
+        <span class="fa fa-cog fa-spin fa-4x" style="min-height: 100vh;display: inline-flex;align-items: center;"></span>
+    </div>
+
+    <div class="stat-panel-inside text-center" style="display: none">
+        <div style="height: 30px">
+            <button type="button" aria-label="Close" class="btn btn-danger btn-block close-statistics-panel"><span class="fa-lg" aria-hidden="true">×</span></button>
+        </div>
+
+        <h5 style="margin-top: 20px">Notification statistics</h5>
+        <table class="table-sm table-hover" style="margin-left: 10px;">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Receivers</th>
+                    <th>Clicks</th>
+                    <th style="width:70px">CTR</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>First check</td>
+                    <td id="first-check-receivers"></td>
+                    <td id="first-check-conversions"></td>
+                    <td id="first-check-ctr"></td>
+                </tr>
+                <tr>
+                    <td>---</td>
+                    <td>---</td>
+                    <td>---</td>
+                    <td>---</td>
+                </tr>
+                <tr>
+                    <td>Last check</td>
+                    <td id="last-check-receivers"></td>
+                    <td id="last-check-conversions"></td>
+                    <td id="last-check-ctr"></td>
+                </tr>
+                <tr style="border-top: solid 2px black">
+                    <td><b>Total</b></td>
+                    <td id="total-receivers"></td>
+                    <td id="total-conversions"></td>
+                    <td id="total-ctr"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="width: 320px; margin-top: 15px">
+            <p id="statistics-check-date-label" style="margin-bottom: 0;font-weight: 500;"></p>
+            <span id="last-check-date"></span>
+        </div>
+
+        <hr style="background-color: black;width: 280px;margin-left: 20px;">
+
+        <div id="notification-statistics-last-sent-div" style="width: 320px; margin-top: 15px;display: none">
+            <p style="margin-bottom: 0;font-weight: 500;">Notification was last sent at:</p>
+            <span id="notification-last-sent"></span>
+        </div>
+
+    </div>
+</div>

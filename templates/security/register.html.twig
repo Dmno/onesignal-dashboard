@@ -1,0 +1,19 @@
+{% extends 'security/base.html.twig' %}
+
+{% block title %}Register{% endblock %}
+
+{% block body %}
+    <div class="bg-white">
+        <div class="form d-flex align-items-center">
+            <div class="content" style="margin: auto; width: 600px;">
+                <h2 class="text-center mt-3">REGISTER A NEW ACCOUNT</h2>
+                {{ form_start(form) }}
+                {{ form_row(form.username) }}
+                {{ form_row(form.password) }}
+                {{ form_end(form) }}
+
+                <small>Already have an account? </small><a href="{{ path("app_login") }}" class="signup">Login</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

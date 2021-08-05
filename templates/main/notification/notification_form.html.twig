@@ -1,0 +1,140 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+{% include 'main/upload/upload_modal.html.twig' %}
+{% include 'main/images/image_select.html.twig' %}
+
+<div class="grid-box">
+    <div class="grid-item-1 container" style="width: 65%;">
+        <div class="row">
+            <h2>{{ title }}</h2>
+            <div class="col-sm-12">
+                {{ form_start(form) }}
+
+                <div class="my-custom-class-for-errors">
+                    {{ form_errors(form) }}
+                </div>
+
+                <div id="notification-part">
+                    <p style="font-size: 25px;">Notification</p>
+                    <div class="col">
+                        {{ form_row(form.name) }}
+                    </div>
+                    <div class="col">
+                        {{ form_row(form.country) }}
+                    </div>
+                    <div class="col">
+                        {{ form_row(form.title) }}
+                        <div class="title-error alert alert-warning" style="display: none"><i class="fa fa-exclamation-triangle"></i> Longer title will not be visible on android! (50 chars max)</div>
+                    </div>
+                    <div class="col">
+                        {{ form_row(form.message) }}
+                        <div class="message-error alert alert-warning" style="display: none"><i class="fa fa-exclamation-triangle"></i> More text will not be visible on android! (150 chars max)</div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            {{ form_label(form.icon) }}
+
+                            <div>
+                                Upload an icon: <i class="fa fa-upload fa-lg uploadNotificationImage" id="icon"></i>
+                                {{ form_widget(form.icon) }}<i class="clear-input fa fa-times" id="clear-icon-input"></i>
+                            </div>
+
+                            {{ form_help(form.icon) }}
+                            <div class="form-error">
+                                {{ form_errors(form.icon) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            {{ form_label(form.image) }}
+
+                            <div>
+                                Upload an image: <i class="fa fa-upload fa-lg uploadNotificationImage" id="image"></i>
+                                {{ form_widget(form.image) }}<i class="clear-input fa fa-times" id="clear-image-input"></i>
+                            </div>
+
+                            {{ form_help(form.image) }}
+                            <div class="form-error">
+                                {{ form_errors(form.image) }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col">
+                        {{ form_row(form.url) }}
+                        <div class="url-error alert alert-warning" style="display: none"><i class="fa fa-exclamation-triangle"></i> This is not a valid url</div>
+                    </div>
+
+                    <div id="to-schedule" class="btn btn-dark">
+                            To schedule
+                    </div>
+                </div>
+
+                <div class="col" id="schedule-part">
+
+                    <div id="back" class="btn btn-dark">Back to notification</div>
+
+                    <h2>Schedule</h2>
+                    {{ form_row(form.delivery) }}
+
+                    <div class="date-block">
+                        <div id="reset-date" class="btn btn-sm btn-success">Reset date</div>
+                        {{ form_row(form.date) }}
+                        <div id="date-error" class="alert alert-danger" style="display: none"><i class="fa fa-exclamation-triangle"></i> <b id="date-error-message" style="font-weight: 500;!important;"></b></div>
+                    </div>
+
+                    {{ form_row(form.optimisation) }}
+
+                    <div id="store-check">
+                        {{ form_row(form.store) }}
+                    </div>
+
+                    <input type="checkbox" id="confirm" name="confirmation">
+                    <label for="confirm"> Confirm information</label><br>
+                    <button class="btn btn-dark mt-3" type="submit" id="save" disabled>Send</button>
+                </div>
+                {{ form_end(form) }}
+            </div>
+            <p id="form-type" style="display: none">{{ type }}</p>
+        </div>
+    </div>
+
+    <div class="notification-preview grid-item-2 text-center" style="width: 80%; display: none">
+        <div id="notification-block">
+            <div id="windows-notification">
+                <img src="{{ asset('big_image.jpg') }}" alt="" class="notification-image" style="height: 240px;">
+                <div id="windows-main-block">
+                    <img src="{{ asset('icon_image.jpg') }}" alt="" class="windows-notification-icon notification-icon">
+                    <p class="notification-title" style="color: white;"></p>
+                    <p class="notification-message windows-notification-text" style="color: #dfdfdf; margin-top: -8px;"></p>
+                </div>
+            </div>
+
+            <div id="android-notification">
+                <img src="{{ asset('icon_image.jpg') }}" alt="" class="android-notification-icon notification-icon">
+                <p class="notification-title android-notification-title"></p>
+                <p class="notification-message" style="color: dimgray; margin-top: -15px;"></p>
+                <img src="{{ asset('big_image.jpg') }}" alt="" class="notification-image" style="height: 240px;">
+            </div>
+        </div>
+
+        <div class="mt-3">
+            <h5 id="notification-type">Web, Windows</h5>
+            <button class="btn btn-primary" id="switch-preview">Switch preview</button>
+        </div>
+
+        <div class="mt-4" id="schedule-block">
+            <div class="schedule-grid text-center">
+                <div class="icon"><i class="fa fa-clock-o fa-3x"></i></div>
+                <div class="title" style="justify-self: start;">WHEN WILL IT SEND:</div>
+                <div class="title2" style="justify-self: start;"><p id="send-time" style="justify-self: start;"></p></div>
+                <div class="icon2" style="display: none"><i class="fa fa-exclamation-triangle fa-3x" style="color: yellow"></i></div>
+                <div class="title3" style="display: none; justify-self: start;align-self: center; font-weight: bold">Notification will be saved without sending</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
