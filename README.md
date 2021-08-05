@@ -1,3 +1,5 @@
+The entire project is created using the Symfony php framework.
+
 This project allows to control an entire Onesignal push message sending platform via api. All the user needs to do is to add an api key of his account.
 
 All the apps (app in this platform is a domain with users or subscribers attached to them) are automatically fetched and created in the system, user statistics are tracked and updated with cronjobs.
