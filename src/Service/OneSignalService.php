@@ -279,7 +279,7 @@ class OneSignalService
                 $body = $this->sendNow($app, $headings, $notification, $content, $image, $icon);
                 $notification->setLastSent(new \DateTime('Europe/Vilnius'));
             } else {
-                $body = $this->sendlater($app, $headings, $notification, $content, $schedule, $image, $icon);
+                $body = $this->sendlater($app, $headings, $notification, $content, $schedule, $settings->getTimezone(), $image, $icon);
             }
 
             $response = $this->notificationRequest($app, $body);
@@ -369,13 +369,13 @@ class OneSignalService
         return $body;
     }
 
-    public function sendlater(App $app, array $headings, Notification $notification, array $content, Schedule $schedule, string $image = null, string $icon = null)
+    public function sendlater(App $app, array $headings, Notification $notification, array $content, Schedule $schedule, string $timezone, string $image = null, string $icon = null)
     {
         $body = [
             'app_id' => $app->getAppId(),
             'headings' => $headings,
             'filters' => [['field' => 'country', 'relation' => '=', 'value' => $notification->getCountry()->getShort()]],
-            'send_after' => $schedule->getDate() . ' UTC+0300',
+            'send_after' => $schedule->getDate() .' '. $timezone,
             'chrome_web_image' => $image,
             'chrome_web_icon' => $icon,
             'url' => $notification->getUrl(),

@@ -68,6 +68,7 @@ $(document).ready(function () {
 
     window.onload = function() {
         let formType = $('#form-type').html();
+        getSettingsTimezone();
         if (formType === "copy" || formType === "campaign" || formType === "new") {
             urlStatus = true;
             duplicationUrl = window.location.href;
@@ -111,9 +112,21 @@ $(document).ready(function () {
         }
     };
 
+    // GET SETTINGS TIMEZONE
+    function getSettingsTimezone(){
+        $.ajax({
+            type: "POST",
+            url: "/get-settings-timezone",
+            dataType: "json",
+            success: function (response) {
+                localStorage.setItem('timezone', response);
+            }
+        });
+    }
+
     ns_delivery.change(function () {
         if (ns_delivery.val() !== "immediately") {
-            $('#send-time').html('Starting at ' + generateCurrentDate() + ' UTC+0300');
+            $('#send-time').html('Starting at ' + generateCurrentDate() + ' ' + localStorage.getItem('timezone'));
             if ($(".invalid-feedback").closest(".date-block").length === 0) {
                 ns_date.val(generateCurrentDate());
                 $('.date-block').slideDown('fast');
@@ -183,7 +196,7 @@ $(document).ready(function () {
     }
 
     ns_date.on("keyup",function () {
-        $('#send-time').html('Starting at ' + ns_date.val() + ' UTC+0300');
+        $('#send-time').html('Starting at ' + ns_date.val() + ' ' + localStorage.getItem('timezone'));
         let dateRegexResult = "true";
         let currentDate = generateCurrentDate();
         let dateError = $('#date-error');
@@ -222,7 +235,7 @@ $(document).ready(function () {
         ns_date.css('border','1px solid #ced4da');
         $('#date-error').slideUp('fast');
         ns_date.val(generateCurrentDate());
-        $('#send-time').html('Starting at ' + ns_date.val() + ' UTC+0300');
+        $('#send-time').html('Starting at ' + ns_date.val() + ' ' + localStorage.getItem('timezone'));
     });
 
     function setProperties(type) {

@@ -22,6 +22,16 @@ class Settings
      */
     private $domain;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $checkDate;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $timezone;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -35,6 +45,30 @@ class Settings
     public function setDomain(string $domain): self
     {
         $this->domain = $domain;
+
+        return $this;
+    }
+
+    public function getCheckDate(): ?\DateTimeInterface
+    {
+        return $this->checkDate;
+    }
+
+    public function setCheckDate(?\DateTimeInterface $checkDate): self
+    {
+        $this->checkDate = $checkDate;
+
+        return $this;
+    }
+
+    public function getTimezone(): ?string
+    {
+        return $this->timezone;
+    }
+
+    public function setTimezone(?string $timezone): self
+    {
+        $this->timezone = $timezone;
 
         return $this;
     }

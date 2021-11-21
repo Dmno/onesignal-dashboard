@@ -265,6 +265,20 @@ class MainController extends AbstractController
     }
 
     /**
+     * @Route("/get-settings-timezone", name="get_timezone")
+     */
+    public function getSettingsTimezone(Request $request)
+    {
+        /** @var Settings $settings */
+        $settings = $this->settingsRepository->findOneBy(['id' => 1]);
+
+        if ($request->isXMLHttpRequest()) {
+            return new JsonResponse($settings->getTimezone());
+        }
+        return true;
+    }
+
+    /**
      * @Route("/generate-invite-code", name="generate_invite_code")
      */
     public function generateInviteCode(Request $request)
